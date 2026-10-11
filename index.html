@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Hacker World</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#050b08;
+  color:#00ff88;
+  font-family:monospace;
+}
+header{
+  background:#07150e;
+  padding:24px 12px;
+  text-align:center;
+  border-bottom:1px solid #00ff88;
+}
+h1{font-size:27px;text-shadow:0 0 12px #00ff88}
+nav{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;padding:15px}
+nav a{color:#00ff88;text-decoration:none;border:1px solid #00ff88;padding:10px}
+section{
+  margin:18px auto;
+  padding:20px;
+  max-width:800px;
+  border:1px solid #087c47;
+  background:#08130d;
+  border-radius:10px;
+}
+h2{color:#00ff99}
+button{
+  background:#00ff88;color:#001b0b;
+  padding:12px;border:0;font-weight:bold;
+  cursor:pointer;border-radius:5px;
+}
+input{
+  width:100%;padding:12px;margin:10px 0;
+  background:#000;color:#00ff88;border:1px solid #00ff88;
+}
+#output{
+  white-space:pre-wrap;overflow-wrap:anywhere;
+  min-height:45px;color:#b4ffc9;
+}
+footer{text-align:center;padding:25px;color:#8bffba}
+</style>
+</head>
+<body>
+
+<header>
+<h1>⚡ CYBER HACKER WORLD ⚡</h1>
+<p>LEARN • PRACTICE • PROTECT</p>
+<p>Ethical Hacking & Cybersecurity</p>
+</header>
+
+<nav>
+<a href="#terminal">Terminal</a>
+<a href="#learn">Learn</a>
+<a href="#tools">Security Tools</a>
+</nav>
+
+<section id="terminal">
+<h2>🖥️ Cyber Terminal</h2>
+<p>अपनी कमांड लिखो। यह एक सुरक्षित शैक्षणिक टर्मिनल है।</p>
+<input id="command" placeholder="help लिखें">
+<button onclick="runCommand()">Run Command</button>
+<div id="output">Cyber Hacker World v1.0
+System ready...
+</div>
+</section>
+
+<section id="learn">
+<h2>📚 Ethical Hacking</h2>
+<h3>1. Linux & Termux</h3>
+<p>Linux कमांड और टर्मिनल का इस्तेमाल सीखें।</p>
+<h3>2. Network Security</h3>
+<p>IP, DNS और नेटवर्क सुरक्षा की बुनियादी जानकारी सीखें।</p>
+<h3>3. Web Security</h3>
+<p>अपनी वेबसाइट को सुरक्षित रखना सीखें।</p>
+</section>
+
+<section id="tools">
+<h2>🛡️ Security Tools</h2>
+<h3>Password Strength Checker</h3>
+<p>अपना असली पासवर्ड यहाँ न लिखें। परीक्षण के लिए नकली पासवर्ड इस्तेमाल करें।</p>
+<input id="password" type="password" placeholder="Test password">
+<button onclick="checkPassword()">Check Strength</button>
+<div id="strength"></div>
+<h3>SHA-256 Hash Generator</h3>
+<input id="hashinput" placeholder="Test text">
+<button onclick="makeHash()">Generate Hash</button>
+<div id="hashresult"></div>
+</section>
+
+<footer>
+<p>Cyber Hacker World © 2026</p>
+<p>Learn ethical hacking. Protect the digital world.</p>
+</footer>
+
+<script>
+function runCommand(){
+ const c=document.getElementById('command').value.trim().toLowerCase();
+ const o=document.getElementById('output');
+ const cmds={
+  help:"Available commands: help, about, date, clear, skills",
+  about:"Cyber Hacker World - Cybersecurity learning website.",
+  skills:"Learn Linux, Termux, networking and web security.",
+  date:new Date().toLocaleString()
+ };
+ if(c==="clear"){o.textContent="Terminal cleared.";return;}
+ o.textContent=cmds[c]||"Command not found. Type help.";
+}
+function checkPassword(){
+ const p=document.getElementById('password').value;
+ let score=0;
+ if(p.length>=8)score++;
+ if(/[A-Z]/.test(p))score++;
+ if(/[a-z]/.test(p))score++;
+ if(/[0-9]/.test(p))score++;
+ if(/[^A-Za-z0-9]/.test(p))score++;
+ const result=["Very weak","Weak","Fair","Good","Strong","Very strong"];
+ document.getElementById('strength').textContent=
+ p.length===0?"पहले एक टेस्ट पासवर्ड लिखें।": "Strength: "+result[score];
+}
+async function makeHash(){
+ const t=document.getElementById('hashinput').value;
+ if(!crypto.subtle){
+  document.getElementById('hashresult').textContent="Use HTTPS to generate SHA-256.";
+  return;
+ }
+ const data=new TextEncoder().encode(t);
+ const digest=await crypto.subtle.digest('SHA-256',data);
+ document.getElementById('hashresult').textContent=
+ Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+</script>
+</body>
+</html>
