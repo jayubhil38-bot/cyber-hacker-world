@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Cyber Hacker World</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #050b0b;
+      color: #00ff99;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .box {
+      width: 100%;
+      max-width: 380px;
+      padding: 25px;
+      border: 1px solid #00ff99;
+      border-radius: 12px;
+      background: #0b1515;
+      box-shadow: 0 0 20px #00ff9930;
+    }
+    h1 { text-align: center; font-size: 25px; }
+    p { text-align: center; color: #c4e8d8; }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    input {
+      background: #071010;
+      color: white;
+      border: 1px solid #237b5b;
+    }
+    button {
+      background: #00ff99;
+      color: #00150c;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .secondary {
+      background: transparent;
+      color: #00ff99;
+      border: 1px solid #00ff99;
+    }
+    #message {
+      overflow-wrap: anywhere;
+      font-size: 14px;
+    }
+    a { color: #00ff99; }
+  </style>
+</head>
+<body>
+  <main class="box">
+    <h1>CYBER HACKER WORLD</h1>
+    <p>Register or Login</p>
+
+    <form id="authForm">
+      <input id="email" type="email" placeholder="Email address"
+             autocomplete="email" required>
+      <input id="password" type="password" placeholder="Password"
+             autocomplete="current-password" minlength="6" required>
+      <button type="submit" id="loginBtn">Login</button>
+      <button type="button" class="secondary" id="registerBtn">
+        Create Account
+      </button>
+    </form>
+
+    <button type="button" class="secondary" id="logoutBtn" hidden>
+      Logout
+    </button>
+
+    <p id="message" role="status" aria-live="polite"></p>
+    <p><a href="./index.html">Back to Home</a></p>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from
+      "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    // Replace these values with your Firebase web app configuration.
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("authForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const message = document.getElementById("message");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const loginBtn = document.getElementById("loginBtn");
+
+    function showMessage(text) {
+      message.textContent = text;
+    }
+
+    function getCredentials() {
+      return {
+        email: emailInput.value.trim(),
+        password: passwordInput.value
+      };
+    }
+
+    loginBtn.addEventListener("click", () => {
+      form.dataset.action = "login";
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const { email, password } = getCredentials();
+      showMessage("Please wait...");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showMessage("Login successful!");
+      } catch (error) {
+        showMessage("Login failed: " + error.message);
+      }
+    });
+
+    registerBtn.addEventListener("click", async () => {
+      const { email, password } = getCredentials();
+
+      if (!email || password.length < 6) {
+        showMessage("Enter an email and a password of at least 6 characters.");
+        return;
+      }
+
+      showMessage("Creating account...");
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        showMessage("Account created successfully!");
+      } catch (error) {
+        showMessage("Registration failed: " + error.message);
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        showMessage("Logged out.");
+      } catch (error) {
+        showMessage("Logout failed: " + error.message);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      loginBtn.hidden = !!user;
+      registerBtn.hidden = !!user;
+      logoutBtn.hidden = !user;
+      emailInput.hidden = !!user;
+      passwordInput.hidden = !!user;
+
+      if (user) {
+        showMessage("Logged in as " + user.email);
+      }
+    });
+  </script>
+</body>
+</html>
